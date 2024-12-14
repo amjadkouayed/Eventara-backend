@@ -1,11 +1,14 @@
 const express = require("express")
 const bodyParser = require('body-parser');
 
-const authRoutes = require("./api/auth")
-const eventRoutes = require("./api/events")
+const app = express()
 const port = 4000
 
-const app = express()
+const authRoutes = require("./api/auth")
+const eventRoutes = require("./api/events")
+
+
+
 app.use(bodyParser.json())
 app.use("/auth", authRoutes) // http://localhost:4000/auth
 app.use("/events", eventRoutes) // http://localhost:4000/events

@@ -7,11 +7,26 @@ let users = ["user1", "user2",]
 
 // http://localhost:4000/auth/login
 router.post("/login", (req, res) => {
-    console.log("login endpoint executed")
     const { user } = req.body
+
+    if (!user) {
+        res.status(400).json({
+            success: false,
+            message: "user required"
+        })
+    }
+
+    else {
     users.push(user)
-    res.json({message: "login endpoint executed"})
-    console.log(users)
+
+    res.status(201).json({
+        success: true,
+        message: `user ${user} created`,
+        data: users
+
+        })
+        console.log(users)
+    }
 })
 
 
