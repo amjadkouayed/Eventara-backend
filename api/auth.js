@@ -1,34 +1,40 @@
 const express = require("express")
 const router = express.Router()
-
-let users = ["user1", "user2",]
-
+const bcrypt = require("bcrypt")
+const passport = require("passport")
+const pool = require("../db")
 
 
 // http://localhost:4000/auth/login
-router.post("/login", (req, res) => {
-    const { user } = req.body
+router.post("/login", passport.authenticate("local", {
+    successRedirect: "/dashboard",
+    failureRedirect: "/auth/login",
+    failureFlash: true
 
-    if (!user) {
-        res.status(400).json({
-            success: false,
-            message: "user required"
+})) 
+
+// http://localhost:4000/auth/register
+router.post("/register", async (req, res) => {
+    const {name, email, password} = req.body
+
+    try {
+        const hashedPassword = await bcrypt.hash(password, 10)
+        const result = await pool.query(
+        'INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *', [name, email, hashedPassword])
+        
+
+        res.status(200).json({
+            message: "user created",
+            data: result.rows
         })
+    } catch (error){
+
+        console.log(error.message)
+        res.redirect("auth/register")
+
     }
 
-    else {
-    users.push(user)
-
-    res.status(201).json({
-        success: true,
-        message: `user ${user} created`,
-        data: users
-
-        })
-        console.log(users)
-    }
 })
-
 
 
 module.exports = router

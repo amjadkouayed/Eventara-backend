@@ -26,7 +26,7 @@ router.post("/create", (req,res) => {
 })
 
 // http://localhost:4000/events/list
-router.get("/list/", (req,res) => {
+router.get("/list", (req,res) => {
     if (events.length === 0) {
         res.status(404).json({
             success: false,
