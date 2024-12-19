@@ -12,6 +12,7 @@ const port = 4000
 
 const authRoutes = require("./api/auth")
 const eventRoutes = require("./api/events")
+const dashboardRouter = require("./api/dashboard")
 
 configureLocalPassport(passport)
 
@@ -19,12 +20,11 @@ app.use(flash())
 app.use(bodyParser.json())
 app.use(session({
     secret: process.env.SESSION_SECRET,
-    saveUninitialized: false,
+    saveUninitialized: true,
     resave: false,
     cookie: {
         maxAge: 60000 * 60,
     }
-
 }))
 
 app.use(passport.initialize())
@@ -32,6 +32,7 @@ app.use(passport.session())
 
 app.use("/auth", authRoutes) // http://localhost:4000/auth
 app.use("/events", eventRoutes) // http://localhost:4000/events
+app.use("/", dashboardRouter) //http://localhost:4000/
 
 app.listen(port, () => {
     console.log(`listening on ${port}` )

@@ -10,8 +10,8 @@ router.post("/login", passport.authenticate("local", {
     successRedirect: "/dashboard",
     failureRedirect: "/auth/login",
     failureFlash: true
-
-})) 
+})
+) 
 
 // http://localhost:4000/auth/register
 router.post("/register", async (req, res) => {
@@ -36,5 +36,24 @@ router.post("/register", async (req, res) => {
 
 })
 
+router.get("/logout", (req,res) => {
+    req.logout((err) => {
+        if (err) {
+            return res.status(500).json({message: "logout failed", error: err})
+        }
+
+        res.status(200).json({ message: "Successfully logged out" })
+    })
+})
+
+function authenticate(req,res,next) {
+    if (req.isAuthenticated()) return next();
+     
+    else{
+        res.status(401).json({ error: "User not logged in" })
+    }
+}
+
 
 module.exports = router
+module.exports.authenticate = authenticate
