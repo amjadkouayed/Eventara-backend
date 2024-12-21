@@ -13,7 +13,7 @@ function configureLocalPassport(passport) {
           
           if (result.rows.length === 0) {
               
-            return done(null, false, { message: "User not found" });
+            return done(null, false);
           }
           
           const user = result.rows[0]
@@ -21,10 +21,10 @@ function configureLocalPassport(passport) {
           const isMatch = await bcrypt.compare(password, user.password);
           if (!isMatch) {
             
-            return done(null, false, { message: "Invalid credentials" });
+            return done(null, false);
           }
   
-          return done(null, user, {message: "login successful"});
+          return done(null, user);
           
         }catch(err) {
           console.error('Error during authentication:', err.message)
@@ -42,7 +42,6 @@ passport.deserializeUser( async (id, done) => {
     const result = await pool.query('SELECT * FROM users WHERE id = $1;', [id]);
 
     if (result.rows.length === 0) {
-      console.log("User not found during deserialization");
       return done(null, false); 
     }
 
@@ -50,7 +49,6 @@ passport.deserializeUser( async (id, done) => {
   
     done(null, user); 
   } catch(err) {
-    console.error("Error deserializing user:", err.message);
     done(err, null)
   }
     

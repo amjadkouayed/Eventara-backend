@@ -20,7 +20,7 @@ app.use(flash())
 app.use(bodyParser.json())
 app.use(session({
     secret: process.env.SESSION_SECRET,
-    saveUninitialized: true,
+    saveUninitialized: false,
     resave: false,
     cookie: {
         maxAge: 60000 * 60,

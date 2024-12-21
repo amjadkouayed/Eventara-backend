@@ -13,12 +13,11 @@ router.post("/create", authenticate, async(req,res) => {
         const user_id = req.user.id
         const result = await pool.query(
             `INSERT INTO events (title, description, date, location, user_id)
-             VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+             VALUES ($1, $2, $3, $4, $5)`,
              [title, description, date, location, user_id]
         )
         res.status(201).json({
             message: "event successfully created",
-            event: result.rows[0]
         })
     } catch(err) {
         console.log(err.message)
@@ -76,6 +75,8 @@ router.delete("/delete/:event_id", authenticate, async(req,res) => {
     }
  
 })
+
+//create a route to return one event
 
 
 module.exports = router
