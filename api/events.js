@@ -2,11 +2,13 @@ const express = require("express")
 const router = express.Router()
 const {authenticate} = require("./auth")
 const pool = require("../db")
+const {getEvents} = require("../service/events-service")
 
 
+router.use(authenticate)
 
-// http://localhost:4000/events/create
-router.post("/create", authenticate, async(req,res) => {
+// http://localhost:4000/events
+router.post("/", async(req,res) => {
     const { title, description, date, location} = req.body
 
     try {
@@ -25,9 +27,8 @@ router.post("/create", authenticate, async(req,res) => {
     }
 
 })
-
 // http://localhost:4000/events/list
-router.get("/list", authenticate, async (req,res) => {
+router.get("/", async (req,res) => {
 
     try {
         const user_id = req.user.id
@@ -35,7 +36,7 @@ router.get("/list", authenticate, async (req,res) => {
             return res.status(400).json({ error: "User ID is required." });
         }
 
-        const result = await pool.query('SELECT * FROM events WHERE user_id = $1', [user_id])
+        const result = getEvents(user_id)
 
         res.json(result.rows)
     }catch(err) {
@@ -46,7 +47,7 @@ router.get("/list", authenticate, async (req,res) => {
 
 
 // http://localhost:4000/events/delete/id
-router.delete("/delete/:event_id", authenticate, async(req,res) => {
+router.delete("/:event_id", async(req,res) => {
     
     try{
     const event_id = req.params.event_id
@@ -77,6 +78,11 @@ router.delete("/delete/:event_id", authenticate, async(req,res) => {
 })
 
 //create a route to return one event
+router.get("/:event_id", async(req, res) => {
+
+
+
+} )
 
 
 module.exports = router

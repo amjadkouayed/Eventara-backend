@@ -32,7 +32,6 @@ app.use(passport.session())
 
 app.use("/auth", authRoutes) // http://localhost:4000/auth
 app.use("/events", eventRoutes) // http://localhost:4000/events
-app.use("/", dashboardRouter) //http://localhost:4000/
 
 app.listen(port, () => {
     console.log(`listening on ${port}` )

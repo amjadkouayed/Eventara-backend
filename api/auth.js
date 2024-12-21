@@ -7,7 +7,7 @@ const pool = require("../db")
 
 // http://localhost:4000/auth/login
 router.post("/login", passport.authenticate("local", {
-    successRedirect: "/dashboard",
+    successRedirect: "/events",
     failureRedirect: "/auth/login",
     failureFlash: true
 })
@@ -26,7 +26,7 @@ router.post("/register", async (req, res) => {
         res.status(200).json({
             message: "user created",
         })
-        
+
     } catch (error){
 
         console.log(error.message)
