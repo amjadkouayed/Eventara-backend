@@ -3,12 +3,13 @@ const router = express.Router()
 const bcrypt = require("bcrypt")
 const passport = require("passport")
 const pool = require("../db")
+const {registerUser} = require("../service/auth-service")
 
 
 // http://localhost:4000/auth/login
 router.post("/login", passport.authenticate("local", {
-    successRedirect: "/events",
-    failureRedirect: "/auth/login",
+    successRedirect: "/event",
+    failureRedirect: "/auth/logi",
     failureFlash: true
 })
 ) 
@@ -17,20 +18,20 @@ router.post("/login", passport.authenticate("local", {
 router.post("/register", async (req, res) => {
     const {name, email, password} = req.body
 
+    if (!name || !email || !password) {
+        throw new Error("name, email, password required")
+    }
+
     try {
         const hashedPassword = await bcrypt.hash(password, 10)
-        const result = await pool.query(
-        'INSERT INTO users (name, email, password) VALUES ($1, $2, $3)', [name, email, hashedPassword])
-        
+        const result = registerUser(name, email, hashedPassword)
 
-        res.status(200).json({
-            message: "user created",
-        })
+        res.status(200).json({message: "user created successufly"})
 
     } catch (error){
 
-        console.log(error.message)
-        res.redirect("auth/register")
+        console.log(error, `this is the error message ${error.message}`)
+        res.status(400).json({error: error.message})
 
     }
 
