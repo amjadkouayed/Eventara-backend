@@ -9,7 +9,7 @@ const {registerUser} = require("../service/auth-service")
 // http://localhost:4000/auth/login
 router.post("/login", passport.authenticate("local", {
     successRedirect: "/event",
-    failureRedirect: "/auth/logi",
+    failureRedirect: "/",
     failureFlash: true
 })
 ) 
@@ -46,6 +46,10 @@ router.get("/logout", (req,res) => {
         res.status(200).json({ message: "Successfully logged out" })
     })
 })
+
+
+
+
 
 function authenticate(req,res,next) {
     if (req.isAuthenticated()) return next();

@@ -26,7 +26,7 @@ router.post("/create", async (req,res) => {
 
 })
 // http://localhost:4000/events/list
-router.get("/list", async (req,res) => {
+router.get("/list", async (req,res) => {   
 
     try {
         const user_id = req.user.id
@@ -46,7 +46,7 @@ router.get("/list", async (req,res) => {
 
 
 // http://localhost:4000/events/delete/id
-router.delete("delete/:event_id", async(req,res) => {
+router.delete("/delete/:event_id", async(req,res) => {
     
     try{
     const event_id = req.params.event_id
@@ -68,11 +68,13 @@ router.delete("delete/:event_id", async(req,res) => {
 })
 
 //create a route to return one event
-router.get("/:event_id", async(req, res) => {
+router.get("/list/:event_id", async(req, res) => {
 
 
 
 } )
+
+//create update route
 
 
 module.exports = router
