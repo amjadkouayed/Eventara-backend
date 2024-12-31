@@ -2,7 +2,6 @@ require("dotenv").config()
 
 const express = require("express")
 const bodyParser = require('body-parser');
-const passport = require("passport")
 const flash = require("express-flash")
 
 const app = express()
