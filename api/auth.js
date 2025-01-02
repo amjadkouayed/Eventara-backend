@@ -14,14 +14,12 @@ router.post("/login", async (req, res) => {
         const result = await authenticateUser(email, password)
 
         if (result.error) {
-            return res.status(400).json(result);
+            return res.status(400).json(result.error);
         }
-        
-        console.log(result)
 
-        const jwt = issueJWT(result.user.id)
+        const jwt = issueJWT(result.userId)
 
-        res.status(200).json({message: "successfuly logged in", token: jwt.token, expiresIn: jwt.expires})
+        res.status(200).json({message: "successfully logged in", token: jwt.token, expiresIn: jwt.expires})
     
     }catch(err) {
         res.status(400).json({error: error.message})
@@ -41,7 +39,7 @@ router.post("/register", async (req, res) => {
         const result = await registerUser(name, email, password)
 
         if (result.error) {
-            return res.status(400).json(result);
+            return res.status(400).json(result.error);
         }
 
         
@@ -66,14 +64,7 @@ router.get("/logout", (req,res) => {
     })
 })
 
-function authenticate(req,res,next) {
-    if (req.isAuthenticated()) return next();
-     
-    else{
-        res.status(401).json({ error: "User not logged in" })
-    }
-}
+
 
 
 module.exports = router
-module.exports.authenticate = authenticate

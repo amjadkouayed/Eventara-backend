@@ -3,11 +3,6 @@ const pool = require("../db")
 const bcrypt = require("bcrypt")
 const jsonwebtoken = require('jsonwebtoken')
 const path = require("path")
-const fs = require("fs")
-
-
-// const pathToKey = path.join(__dirname, "../config/private-key.pem");
-// const PRIV_KEY = fs.readFileSync(pathToKey, 'utf8')
 
 const privateKey = process.env.JWT_PRIVATE_KEY
 
@@ -18,7 +13,7 @@ module.exports.registerUser =  async (name, email, password) => {
     const userExists = await pool.query('SELECT id FROM users WHERE email = $1', [email]);
 
     if (userExists.rows.length > 0) {
-        return { message: "User already exists", error: "email already registered" };
+        return { error: "failed to register user" };
     }
 
     const hashedPassword = await bcrypt.hash(password, 10)
@@ -38,20 +33,20 @@ module.exports.authenticateUser = async (email, password) => {
         const result = await pool.query('SELECT * FROM users WHERE email = $1', [email])
 
         if (result.rows.length === 0) {
-            return {error: "login failed", message: "user not found"};
+            return {error: "login failed"};
         }
         const user = result.rows[0]
+        const userId = user.id
 
         const isMatch = await bcrypt.compare(password, user.password)
         if (!isMatch) {
-            return {error: "login failed", message: "wrong password"}
+            return {error: "login failed"}
         }
 
-        return {user, message: "user logged in"}
+        return {userId, message: "user logged in"}
 
 
     }catch(err){
-        console.log("error in authenticateUser")
         return err.message
     }
 }
@@ -64,8 +59,6 @@ module.exports.issueJWT = (userId) => {
       sub: userId,
       iat: Date.now()
     };
-    
-    console.log(payload)
 
     const signedToken = jsonwebtoken.sign(payload, privateKey, { expiresIn: expiresIn, algorithm: 'RS256' });
   

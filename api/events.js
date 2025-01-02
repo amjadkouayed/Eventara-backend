@@ -1,6 +1,5 @@
 const express = require("express")
 const router = express.Router()
-const {authenticate} = require("./auth")
 const pool = require("../db")
 const {getEvents, createEvent, deleteEvent} = require("../service/events-service")
 const passport = require("passport")
