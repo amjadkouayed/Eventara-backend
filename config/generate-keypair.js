@@ -5,7 +5,7 @@ const fs = require('fs');
 const keyPair = crypto.generateKeyPairSync('rsa', {
     modulusLength: 4096, 
     publicKeyEncoding: {
-        type: 'spki', 
+        type: 'pkcs1', 
         format: 'pem' 
     },
     privateKeyEncoding: {

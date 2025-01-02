@@ -1,5 +1,4 @@
 const fs = require('fs');
-const { ExtractJwt } = require('passport-jwt');
 const path = require('path');
 const JwtStrategy = require("passport-jwt").Strategy
 const ExtractJwt = require("passport-jwt").ExtractJwt
@@ -12,7 +11,7 @@ const PUB_KEY = fs.readFileSync(pathToKey, 'utf8');
 const options = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     secretOrKey: PUB_KEY,
-    algorithmx: ["RS256"]
+    algorithms: ["RS256"]
 };
 
 const strategy = new JwtStrategy(options, async (payload, done) => {
@@ -38,6 +37,6 @@ const strategy = new JwtStrategy(options, async (payload, done) => {
 })
 
 module.exports.configureJwtPassport = (passport) => {
-    passport.use()
+    passport.use(strategy)
 }
 

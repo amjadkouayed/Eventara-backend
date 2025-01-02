@@ -3,10 +3,11 @@ const router = express.Router()
 const {authenticate} = require("./auth")
 const pool = require("../db")
 const {getEvents, createEvent, deleteEvent} = require("../service/events-service")
+const passport = require("passport")
 
 
+router.use(passport.authenticate("jwt", {session: false}))
 
-router.use(authenticate)
 
 // http://localhost:4000/events/create
 router.post("/create", async (req,res) => {
@@ -28,6 +29,7 @@ router.post("/create", async (req,res) => {
 // http://localhost:4000/events/list
 router.get("/list", async (req,res) => {
 
+
     try {
         const user_id = req.user.id
         if (!user_id) {
@@ -35,7 +37,6 @@ router.get("/list", async (req,res) => {
         }
 
         const result = await getEvents(user_id)
-        console.log(result)
         res.json(result.rows)
 
     }catch(err) {
