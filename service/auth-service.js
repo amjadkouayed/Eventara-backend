@@ -6,9 +6,10 @@ const path = require("path")
 const fs = require("fs")
 
 
-const pathToKey = path.join(__dirname, "../config/private-key.pem");
-const PRIV_KEY = fs.readFileSync(pathToKey, 'utf8')
+// const pathToKey = path.join(__dirname, "../config/private-key.pem");
+// const PRIV_KEY = fs.readFileSync(pathToKey, 'utf8')
 
+const privateKey = process.env.JWT_PRIVATE_KEY
 
 module.exports.registerUser =  async (name, email, password) => {
 
@@ -66,7 +67,7 @@ module.exports.issueJWT = (userId) => {
     
     console.log(payload)
 
-    const signedToken = jsonwebtoken.sign(payload, PRIV_KEY, { expiresIn: expiresIn, algorithm: 'RS256' });
+    const signedToken = jsonwebtoken.sign(payload, privateKey, { expiresIn: expiresIn, algorithm: 'RS256' });
   
     return {
       token: "Bearer " + signedToken,
