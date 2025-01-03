@@ -1,4 +1,4 @@
 .env
 node_modules
-config/public-key.pem
-config/generate-keypair.js
+public-key.pem
+generate-keypair.js
