@@ -3,15 +3,28 @@ const router = express.Router()
 const bcrypt = require("bcrypt")
 const passport = require("passport")
 const pool = require("../db")
-const {registerUser} = require("../service/auth-service")
+const {registerUser, authenticateUser, issueJWT} = require("../service/auth-service")
 
 
 // http://localhost:4000/auth/login
-router.post("/login", passport.authenticate("local", {
-    successRedirect: "/event",
-    failureRedirect: "/",
-    failureFlash: true
-})
+router.post("/login", async (req, res) => {
+    const {email, password} = req.body 
+
+    try{
+        const result = await authenticateUser(email, password)
+
+        if (result.error) {
+            return res.status(400).json(result.error);
+        }
+
+        const jwt = issueJWT(result.userId)
+
+        res.status(200).json({message: "successfully logged in", token: jwt.token, expiresIn: jwt.expires})
+    
+    }catch(err) {
+        res.status(400).json({error: error.message})
+    }
+}
 ) 
 
 // http://localhost:4000/auth/register
@@ -23,14 +36,18 @@ router.post("/register", async (req, res) => {
     }
 
     try {
-        const hashedPassword = await bcrypt.hash(password, 10)
-        const result = registerUser(name, email, hashedPassword)
+        const result = await registerUser(name, email, password)
 
-        res.status(200).json({message: "user created successufly"})
+        if (result.error) {
+            return res.status(400).json(result.error);
+        }
+
+        
+
+        res.status(200).json(result)
 
     } catch (error){
 
-        console.log(error, `this is the error message ${error.message}`)
         res.status(400).json({error: error.message})
 
     }
@@ -50,15 +67,4 @@ router.get("/logout", (req,res) => {
 
 
 
-
-function authenticate(req,res,next) {
-    if (req.isAuthenticated()) return next();
-     
-    else{
-        res.status(401).json({ error: "User not logged in" })
-    }
-}
-
-
 module.exports = router
-module.exports.authenticate = authenticate
