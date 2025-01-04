@@ -17,7 +17,7 @@ router.post("/create", async (req,res) => {
         const user_id = req.user.id
         const result = await createEvent(title, description, date, location, user_id)
 
-        res.status(201).json({ message: "event successfully created" })
+        res.status(201).json({ message: "event successfully created", event_id: result.rows[0].id })
 
     } catch(err) {
         console.log(err.message)

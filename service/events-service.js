@@ -11,7 +11,7 @@ module.exports.getEvents = async (user_id) => {
 
 module.exports.createEvent = async (title, description, date, location, user_id) => {
 
-    const createQuery = `INSERT INTO events (title, description, date, location, user_id) VALUES ($1, $2, $3, $4, $5)`
+    const createQuery = `INSERT INTO events (title, description, date, location, user_id) VALUES ($1, $2, $3, $4, $5) RETURNING id`
     const result = await pool.query(createQuery, [title, description, date, location, user_id])
 
     return result
