@@ -14,18 +14,12 @@ module.exports.createEvent = async (title, description, date, location, user_id)
     const createQuery = `INSERT INTO events (title, description, date, location, user_id) VALUES ($1, $2, $3, $4, $5) RETURNING id`
     const result = await pool.query(createQuery, [title, description, date, location, user_id])
 
-    console.log(result.rows)
-    return result.rows
+    return result.rows.id
 }
 
 
 
 module.exports.deleteEvent = async (event_id, user_id) => {
-
-    if (!user_id || !event_id) {
-        throw new Error("User ID and Event ID are required.");
-    }
-
     const checkEventQuery = "SELECT * FROM events WHERE id = $1 AND user_id = $2 "
     const checkEventResult = await pool.query(checkEventQuery, [event_id, user_id])
 

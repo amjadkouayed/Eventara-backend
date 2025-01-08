@@ -10,6 +10,7 @@ const port = 4000
 
 const authRoutes = require("./api/auth")
 const eventRoutes = require("./api/events")
+const guestsRoutes = require("./api/event/guests")
 
 
 app.use(flash())
@@ -22,6 +23,7 @@ app.use(passport.initialize())
 
 app.use("/auth", authRoutes) // http://localhost:4000/auth
 app.use("/events", eventRoutes) // http://localhost:4000/events
+app.use("/events", guestsRoutes)
 
 app.listen(port, () => {
     console.log(`listening on  ${port}` )

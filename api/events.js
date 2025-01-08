@@ -1,6 +1,5 @@
 const express = require("express")
 const router = express.Router()
-const pool = require("../db")
 const {getEvents, createEvent, deleteEvent, getSingleEvent, updateEvent} = require("../service/events-service")
 const passport = require("passport")
 
@@ -16,26 +15,24 @@ router.post("/", async (req,res) => {
     try {
         const result = await createEvent(title, description, date, location, user_id)
 
-        res.status(201).json({ message: "event successfully created", event_id: result.id })
+        res.status(201).json({ message: "event successfully created", event_id: result })
 
     } catch(err) {
-        console.error("eror creating event", err.message)
+        console.error("eror creating event")
         res.status(500).json({ error: "Internal server error" })
     }
 
 })
 
 router.get("/", async (req,res) => {   
-
-
+    const user_id = req.user.id
     try {
-        const user_id = req.user.id
         if (!user_id) {
             return res.status(400).json({ error: "User ID is required." });
         }
 
         const result = await getEvents(user_id)
-        res.json(result)
+        res.status(200).json(result)
 
     }catch(err) {
         console.error("error getting events")
@@ -46,18 +43,17 @@ router.get("/", async (req,res) => {
 
 
 router.delete("/:event_id", async(req,res) => {
-    
-    try{
     const event_id = req.params.event_id
     const user_id = req.user.id
 
+    try{
     const result = await deleteEvent(event_id, user_id)
 
     if (result.error) {
         return res.status(404).json(result.error)
     }
 
-    res.json(result)
+    res.status(200).json(result)
     
     }catch(err) {
         console.error("Error deleting event")
