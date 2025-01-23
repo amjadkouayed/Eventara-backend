@@ -1,8 +1,6 @@
 require("dotenv").config({ path: "../.env" });
-const pool = require("../db");
 const bcrypt = require("bcrypt");
 const jsonwebtoken = require("jsonwebtoken");
-const path = require("path");
 const { PrismaClient } = require("@prisma/client");
 
 const privateKey = process.env.JWT_PRIVATE_KEY;

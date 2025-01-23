@@ -25,7 +25,7 @@ router.post("/login", async (req, res) => {
       expiresIn: jwt.expires,
     });
   } catch (err) {
-    res.status(400).json({ message: "error logging in", error: err.message });
+    res.status(400).json({ error: "Error logging in" });
   }
 });
 
@@ -48,14 +48,14 @@ router.post("/register", async (req, res) => {
 
     res.status(200).json(result.message);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ error: "Error registering user" });
   }
 });
 
 router.get("/logout", (req, res) => {
   req.logout((err) => {
     if (err) {
-      return res.status(500).json({ message: "logout failed", error: err });
+      return res.status(500).json({ message: "logout failed" });
     }
 
     res.status(200).json({ message: "Successfully logged out" });

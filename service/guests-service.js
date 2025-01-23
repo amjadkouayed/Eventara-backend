@@ -1,4 +1,3 @@
-const pool = require("../db");
 const { PrismaClient } = require("@prisma/client");
 
 prisma = new PrismaClient();
@@ -37,7 +36,7 @@ module.exports.deleteGuest = async (guestId, eventId) => {
 
   //   const deleteQuery = "DELETE FROM guests WHERE id = $1 AND event_id = $2";
   //   await pool.query(deleteQuery, [guestId, event_id]);
-  const deletedGuest = await prisma.guests.delete({
+  await prisma.guests.delete({
     where: {
       id: guestId,
       event_id: eventId,

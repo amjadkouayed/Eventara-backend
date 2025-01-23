@@ -24,12 +24,11 @@ router.post("/", async (req, res) => {
       location,
       userId
     );
-    console.log(result);
     res
       .status(201)
       .json({ message: "event successfully created", event_id: result });
   } catch (err) {
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Interna; server error" });
   }
 });
 
@@ -54,7 +53,6 @@ router.delete("/:event_id", async (req, res) => {
 
     res.status(200).json(result);
   } catch (err) {
-    console.log(err);
     res.status(500).json({ error: "Internal server error" });
   }
 });
