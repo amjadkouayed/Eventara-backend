@@ -1,69 +1,81 @@
-require('dotenv').config({ path: '../.env' });
-const pool = require("../db")
-const bcrypt = require("bcrypt")
-const jsonwebtoken = require('jsonwebtoken')
-const path = require("path")
+require("dotenv").config({ path: "../.env" });
+const pool = require("../db");
+const bcrypt = require("bcrypt");
+const jsonwebtoken = require("jsonwebtoken");
+const path = require("path");
+const { PrismaClient } = require("@prisma/client");
 
-const privateKey = process.env.JWT_PRIVATE_KEY
+const privateKey = process.env.JWT_PRIVATE_KEY;
 
-module.exports.registerUser =  async (name, email, password) => {
+const prisma = new PrismaClient();
 
-    try {
+module.exports.registerUser = async (name, email, password) => {
+  try {
+    const userExists = await prisma.users.findMany({
+      where: {
+        email: email,
+      },
+    });
 
-    const userExists = await pool.query('SELECT id FROM users WHERE email = $1', [email]);
-
-    if (userExists.rows.length > 0) {
-        return { error: "failed to register user" };
+    if (userExists.length > 0) {
+      return { error: "failed to register user" };
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10)
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    const result = await pool.query('INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id', [name, email, hashedPassword])
+    const newUser = await prisma.users.create({
+      data: {
+        name: name,
+        email: email,
+        password: hashedPassword,
+      },
+    });
 
-    return {message: "user created successfuly", userId: result.rows[0].id }
-
-    } catch(err){
-        return {message: "error saving user", error: err.message}
-    }
-}
+    return { message: "user created successfuly", userId: newUser.id };
+  } catch (err) {
+    return { message: "error registering user", error: err.message };
+  }
+};
 
 module.exports.authenticateUser = async (email, password) => {
+  try {
+    const user = await prisma.users.findUnique({
+      where: {
+        email: email,
+      },
+    });
 
-    try{
-        const result = await pool.query('SELECT * FROM users WHERE email = $1', [email])
-
-        if (result.rows.length === 0) {
-            return {error: "login failed", message: "wrong credentials "};
-        }
-        const user = result.rows[0]
-        const userId = user.id
-
-        const isMatch = await bcrypt.compare(password, user.password)
-        if (!isMatch) {
-            return {error: "login failed", message: "wrong credentials"}
-        }
-
-        return {userId, message: "user logged in"}
-
-
-    }catch(err){
-        return err.message
+    if (!user) {
+      return { error: "login failed", message: "wrong credentials " };
     }
-}
+    const userId = user.id;
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return { error: "login failed", message: "wrong credentials" };
+    }
+
+    return { userId: userId, message: "user logged in" };
+  } catch (err) {
+    return { message: "error logging in", error: err.message };
+  }
+};
 
 module.exports.issueJWT = (userId) => {
-  
-    const expiresIn = '1d';
-  
-    const payload = {
-      sub: userId,
-      iat: Date.now()
-    };
+  const expiresIn = "1d";
 
-    const signedToken = jsonwebtoken.sign(payload, privateKey, { expiresIn: expiresIn, algorithm: 'RS256' });
-  
-    return {
-      token: "Bearer " + signedToken,
-      expires: expiresIn
-    }
-  }
+  const payload = {
+    sub: userId,
+    iat: Date.now(),
+  };
+
+  const signedToken = jsonwebtoken.sign(payload, privateKey, {
+    expiresIn: expiresIn,
+    algorithm: "RS256",
+  });
+
+  return {
+    token: "Bearer " + signedToken,
+    expires: expiresIn,
+  };
+};

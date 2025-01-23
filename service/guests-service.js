@@ -1,30 +1,48 @@
-const pool = require("../db")
+const pool = require("../db");
+const { PrismaClient } = require("@prisma/client");
 
-module.exports.getGuests = async (events_id) => {
+prisma = new PrismaClient();
+module.exports.getGuests = async (eventId) => {
+  const Guests = await prisma.guests.findMany({ where: { event_id: eventId } });
 
-    const result = await pool.query("SELECT * FROM guests WHERE event_id = $1", [events_id])
+  return Guests;
+};
 
-    return result
-}
+module.exports.addGuest = async (firstName, lastName, email, eventId) => {
+  const addedGuest = await prisma.guests.create({
+    data: {
+      first_name: firstName,
+      last_name: lastName,
+      email: email,
+      event_id: eventId,
+    },
+  });
+  // const query = "INSERT INTO guests (first_name, last_name, email, phone_number, event_id) VALUES ($1, $2, $3, $4, $5) RETURNING id"
+  // const result = await pool.query(query, [firstName, lastName, email, phoneNumber, event_id])
 
-module.exports.addGuest = async (firstName, lastName, email, phoneNumber, event_id) => {
-    const query = "INSERT INTO guests (first_name, last_name, email, phone_number, event_id) VALUES ($1, $2, $3, $4, $5) RETURNING id"
-    const result = await pool.query(query, [firstName, lastName, email, phoneNumber, event_id])
+  return addedGuest;
+};
 
-    return result.rows.id
-}
+module.exports.deleteGuest = async (guestId, eventId) => {
+  const guest = await prisma.guests.findUnique({
+    where: {
+      id: guestId,
+      event_id: eventId,
+    },
+  });
 
-module.exports.deleteGuest = async (guestId, event_id) => {
-    const checkguestQuery = "SELECT * FROM guests WHERE id = $1 AND event_id = $2 "
-    const checkguestResult = await pool.query(checkguestQuery, [guestId, event_id])
+  if (!guest) {
+    return { error: "event not found or you are not the owner" };
+  }
 
-    if (checkguestResult.rows.length === 0) {
-        return {error: "event not found or you are not the owner"}
-    }
+  //   const deleteQuery = "DELETE FROM guests WHERE id = $1 AND event_id = $2";
+  //   await pool.query(deleteQuery, [guestId, event_id]);
+  const deletedGuest = await prisma.guests.delete({
+    where: {
+      id: guestId,
+      event_id: eventId,
+    },
+  });
 
-    const deleteQuery = "DELETE FROM guests WHERE id = $1 AND event_id = $2"
-    await pool.query(deleteQuery, [guestId, event_id])
-
-    return {message: "event deleted successfully"}
-
-}
+  return { message: "guest deleted successfully" };
+};

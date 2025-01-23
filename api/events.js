@@ -1,107 +1,95 @@
-const express = require("express")
-const router = express.Router()
-const {getEvents, createEvent, deleteEvent, getSingleEvent, updateEvent} = require("../service/events-service")
-const passport = require("passport")
+const express = require("express");
+const router = express.Router();
+const {
+  getEvents,
+  createEvent,
+  deleteEvent,
+  getSingleEvent,
+  updateEvent,
+} = require("../service/events-service");
+const passport = require("passport");
 
+router.use(passport.authenticate("jwt", { session: false }));
 
-router.use(passport.authenticate("jwt", {session: false}))
+//create event
+router.post("/", async (req, res) => {
+  const { title, description, date, location } = req.body;
+  const userId = req.user.id;
 
+  try {
+    const result = await createEvent(
+      title,
+      description,
+      date,
+      location,
+      userId
+    );
+    console.log(result);
+    res
+      .status(201)
+      .json({ message: "event successfully created", event_id: result });
+  } catch (err) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
+//get all events
+router.get("/", async (req, res) => {
+  const userId = req.user.id;
+  try {
+    const result = await getEvents(userId);
+    res.status(200).json(result);
+  } catch (err) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
-router.post("/", async (req,res) => {
-    const {title, description, date, location} = req.body
-    const user_id = req.user.id
+// delete event
+router.delete("/:event_id", async (req, res) => {
+  const eventId = parseInt(req.params.event_id, 10);
+  const userId = req.user.id;
 
-    try {
-        const result = await createEvent(title, description, date, location, user_id)
+  try {
+    const result = await deleteEvent(eventId, userId);
 
-        res.status(201).json({ message: "event successfully created", event_id: result })
+    res.status(200).json(result);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
-    } catch(err) {
-        console.error("eror creating event")
-        res.status(500).json({ error: "Internal server error" })
-    }
+//get one event
+router.get("/:event_id", async (req, res) => {
+  const eventId = parseInt(req.params.event_id, 10);
+  const userId = req.user.id;
 
-})
+  try {
+    const result = await getSingleEvent(eventId, userId);
 
-router.get("/", async (req,res) => {   
-    const user_id = req.user.id
-    try {
-        if (!user_id) {
-            return res.status(400).json({ error: "User ID is required." });
-        }
+    res.status(200).json(result);
+  } catch (err) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
-        const result = await getEvents(user_id)
-        res.status(200).json(result)
+//update an event
+router.put("/:event_id", async (req, res) => {
+  const event_id = parseInt(req.params.event_id, 10);
+  const userId = req.user.id;
+  const updateData = req.body;
 
-    }catch(err) {
-        console.error("error getting events")
-        res.status(500).json({ error: "Internal server error" })
-    }
-})
-
-
-
-router.delete("/:event_id", async(req,res) => {
-    const event_id = req.params.event_id
-    const user_id = req.user.id
-
-    try{
-    const result = await deleteEvent(event_id, user_id)
+  try {
+    const result = await updateEvent(event_id, userId, updateData);
+    console.log(result);
 
     if (result.error) {
-        return res.status(404).json(result.error)
+      return res.status(400).json(result.error);
     }
+    res.status(200).json({ message: "event updated successfuly" });
+  } catch (err) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
-    res.status(200).json(result)
-    
-    }catch(err) {
-        console.error("Error deleting event")
-        res.status(500).json({ error: "Internal server error" })
-    }
- 
-})
-
-//create a route to return one event
-router.get("/:event_id", async(req, res) => {
-    const event_id = req.params.event_id
-    const user_id = req.user.id
-
-    try {
-        const result = await getSingleEvent(event_id, user_id)
-        
-        if (result.error){
-            return res.status(400).json(result.error)
-        }
-
-        res.status(200).json(result)
-
-    } catch (err) {
-        console.error("error getting event")
-        res.status(500).json({ error: "Internal server error"})
-    }
-} )
-
-//create update route
-router.put("/:event_id", async (req, res) => {
-    const event_id = req.params.event_id
-    const user_id = req.user.id
-    const updateData = req.body
-
-    try{
-        const result = await updateEvent(event_id, user_id, updateData)
-        console.log(result)
-
-        if (result.error){
-            return res.status(400).json(result.error)
-        }
-        res.status(200).json({message: "event updated successfuly", new_values : result})
-
-    }catch(err) {
-        console.error("error getting event")
-        res.status(500).json({ error: "Internal server error"})
-    }
-})
-
-
-module.exports = router
+module.exports = router;
