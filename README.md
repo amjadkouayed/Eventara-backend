@@ -2,12 +2,13 @@
 
 Welcome to the Events Management System backend! This project provides a robust platform for creating, organizing, and managing events all in one place. From handling guest lists and RSVPs to managing vendors and budgets, this project providesa seamless event planning experience.
 
-[Check out the front-end Repo](https://github.com/amjadkouayed/event-ms-frontend)
+[Check out the front-end Repo](https://github.com/amjadkouayed/event-ms-frontend)  
+
 [Our miro planning board](https://miro.com/welcomeonboard/R2VQbkNsNHdVOFBTY2J6ZTBBVnVicmg3S2MxOWJNdWtxV2V0bUN3dFZ3bCtVc3V3ZjltdVVMQ2c5MWNuRTZZeTdZNzI2QWpkbXljRDJveWpCRGloUFNpbU9WaEpXc0ZJbDVrUkhSaTRZcFVUeVR3czFFdkpnWStITjNZTzVJVmUhZQ==?share_link_id=803532159551)
 
 ## Features
 
-![features](./assests/features.png)
+![features picture](./assests/features.png)
 
 - **Event Management**: create, update, delete and organize all of your events in one place
 - **Guest Management**: Maintain a comprehensive guest list and send invitations effortlessly.
@@ -18,7 +19,7 @@ Welcome to the Events Management System backend! This project provides a robust 
 
 ## Tech Stack
 
-![features](./assests/techstack.png)
+![techstack picture](./assests/techstack.png)
 
 - **Language**: JavaScript (Node.js)
 - **Framework**: Express.js
