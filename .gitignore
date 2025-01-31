@@ -1,5 +1,4 @@
 .env
 node_modules
 public-key.pem
-generate-keypair.js
 /prisma/migrations
