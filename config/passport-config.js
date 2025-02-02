@@ -2,11 +2,13 @@ const fs = require('fs');
 const path = require('path');
 const JwtStrategy = require("passport-jwt").Strategy
 const ExtractJwt = require("passport-jwt").ExtractJwt
-const pool = require("../db")
+const {PrismaClient} = require('@prisma/client')
 
 const pathToKey = path.join(__dirname, "public-key.pem");
 const PUB_KEY = fs.readFileSync(pathToKey, 'utf8');
 
+
+const prisma = new PrismaClient()
 
 const options = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -17,13 +19,17 @@ const options = {
 const strategy = new JwtStrategy(options, async (payload, done) => {
     const user_id = payload.sub
     try {
-        const result = await pool.query('SELECT * FROM users WHERE id = $1', [user_id]);
-
-        if (result.rows.length === 0) {
+        const result = prisma.users.findUnique({
+            where: {
+                id: user_id
+            }
+        })
+        console.log(result)
+        if (result.length === 0) {
             return done(null, false);
         }
 
-        const user = result.rows[0]
+        const user = result[0]
 
         return done(null, user)
 
