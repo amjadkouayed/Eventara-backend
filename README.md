@@ -15,7 +15,7 @@ Welcome to the Events Management System backend! This project provides a robust 
 - **RSVP Functionality**: Create custom invitation pages, receive guest confirmations or cancellations, and track their preferences.
 - **Notification System**: Stay informed with guest updates and send notifications about event changes.
 - **Vendor Management**: Manage vendor details and contacts linked to specific events
-- **Budgeting Managment**: Manage budgeting for a specific event
+- **Budgeting Managment**: Manage budgeting for the event
 
 ## Tech Stack
 
