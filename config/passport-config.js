@@ -23,7 +23,6 @@ const strategy = new JwtStrategy(options, async (payload, done) => {
         id: user_id,
       },
     });
-    console.log(result);
     if (result.length === 0) {
       return done(null, false);
     }
