@@ -1,6 +1,6 @@
-# Events management System Backend
+# Eventara
 
-Welcome to the Events Management System backend! This project provides a robust platform for creating, organizing, and managing events all in one place. From handling guest lists and RSVPs to managing vendors and budgets, this project providesa seamless event planning experience.
+Welcome to our project's backend repo, Eventara is an Events Management System backend! it provides a robust platform for creating, organizing, and managing events all in one place. From handling guest lists and RSVPs to managing vendors and budgets, this project providesa seamless event planning experience.
 
 [Check out the front-end Repo](https://github.com/amjadkouayed/event-ms-frontend)  
 
