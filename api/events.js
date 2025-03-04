@@ -79,12 +79,13 @@ router.put("/:event_id", async (req, res) => {
 
   try {
     const result = await updateEvent(event_id, userId, updateData);
-    console.log(result);
 
     if (result.error) {
       return res.status(400).json(result.error);
     }
-    res.status(200).json({ message: "event updated successfuly" });
+    res
+      .status(200)
+      .json({ message: "event updated successfuly", event: result });
   } catch (err) {
     res.status(500).json({ error: "Internal server error" });
   }

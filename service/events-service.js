@@ -53,7 +53,6 @@ module.exports.deleteEvent = async (eventId, userId) => {
       user_id: userId,
     },
   });
-  console.log(event);
 
   if (!event) {
     return { error: "Event not found" };
