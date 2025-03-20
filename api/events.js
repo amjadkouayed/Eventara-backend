@@ -13,7 +13,7 @@ router.use(passport.authenticate("jwt", { session: false }));
 
 //create event
 router.post("/", async (req, res) => {
-  const { title, description, date, location } = req.body;
+  const { title, description, date, location, time } = req.body;
   const userId = req.user.id;
 
   try {
@@ -21,6 +21,7 @@ router.post("/", async (req, res) => {
       title,
       description,
       date,
+      time,
       location,
       userId
     );
@@ -28,7 +29,8 @@ router.post("/", async (req, res) => {
       .status(201)
       .json({ message: "event successfully created", event_id: result });
   } catch (err) {
-    res.status(500).json({ error: "Interna; server error" });
+    res.status(500).json({ error: "Internal server error" });
+    console.log(err);
   }
 });
 

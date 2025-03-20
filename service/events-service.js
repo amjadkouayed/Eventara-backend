@@ -16,6 +16,7 @@ module.exports.createEvent = async (
   title,
   description,
   date,
+  time,
   location,
   userId
 ) => {
@@ -32,6 +33,7 @@ module.exports.createEvent = async (
       title: title,
       description: description,
       date: new Date(date),
+      time: time,
       location: location,
       user_id: userId,
     },
@@ -90,7 +92,7 @@ module.exports.getSingleEvent = async (eventId, userId) => {
 };
 
 module.exports.updateEvent = async (eventId, userId, updateData) => {
-  const { title, description, date, location } = updateData;
+  const { title, description, date, time, location } = updateData;
 
   const event = await prisma.events.findUnique({
     where: {
@@ -107,6 +109,7 @@ module.exports.updateEvent = async (eventId, userId, updateData) => {
   if (title) dataToUpdate.title = title;
   if (description) dataToUpdate.description = description;
   if (date) dataToUpdate.date = new Date(date);
+  if (time) dataToUpdate.time = time;
   if (location) dataToUpdate.location = location;
 
   const updatedEvent = prisma.events.update({
