@@ -6,7 +6,8 @@ const { getGuests } = require("../../service/guests-service");
 
 router.post("/:event_id/sendinvitations", async (req, res) => {
   const eventId = parseInt(req.params.event_id, 10);
-  const { emailData } = req.body;
+  const emailData = req.body;
+  console.log(req.body);
   try {
     const guests = await getGuests(eventId);
     if (!guests) {
